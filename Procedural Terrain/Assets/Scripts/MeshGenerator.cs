@@ -5,6 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
+    [SerializeField] private int xSize;
+    [SerializeField] private int zSize;
+
+
     Mesh mesh;
 
     Vector3[] vertices;
@@ -22,19 +26,17 @@ public class MeshGenerator : MonoBehaviour
 
    void CreateShape()
     {
-        vertices = new Vector3[]
-        {
-            new Vector3(0, 0, 0),
-            new Vector3(0, 0, 1),
-            new Vector3(1, 0, 0),
-            new Vector3(1, 0, 1)
-        };
+        vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
-        triangles = new int[]
+        //loop through the vertices and assign them to a grid
+        for (int z = 0, index = 0; z <= zSize; z++)
         {
-            0, 1, 2,
-            1, 3, 2
-        };
+            for(int x = 0; x <= xSize; x++)
+            {
+                vertices[index] = new Vector3(x, 0, z);
+                index++;
+            }
+        }
     }
 
     void UpdateMesh()
@@ -45,5 +47,16 @@ public class MeshGenerator : MonoBehaviour
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (var vertex in vertices)
+        {
+            if (vertex != null)
+            {
+                Gizmos.DrawSphere(vertex, 0.1f);
+            }
+        }
     }
 }
